@@ -1,0 +1,3 @@
+# Local scratch only. The evidence/ directory IS committed on purpose.
+*.log
+.DS_Store
