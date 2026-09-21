@@ -108,7 +108,7 @@ sequenceDiagram
     DEV->>GH: push --force main
     GH->>GH: set refs/heads/main back to C2
     GH-->>GH: C-oops stays in the object store
-    GH->>EV: PushEvent, size 0, before = C-oops
+    GH->>EV: PushEvent, no commits, before = C-oops
     EV-->>GH: the hash is now public, permanently
 ```
 
@@ -188,14 +188,35 @@ Its branch was deleted and its pull request was closed. The ref survived both.
 
 You do not need to know the hash. GitHub publishes it for you.
 
-Every force-push emits a `PushEvent` with `"size": 0`. The `before` field of that event holds the hash of the
-commit that was just abandoned. The GH Archive project stores the whole public event stream as hourly JSON
-files. It also mirrors the stream into a public BigQuery dataset. So the abandoned hashes are queryable in
-bulk, back to 2011.
+A force-push that removes commits emits a `PushEvent` that carries no commits. Historical GH Archive records
+show this as `"size": 0`. The current API omits the `size` and `commits` fields instead. Either way, the
+`before` field holds the hash of the commit that was just abandoned.
+
+This is the real event from this repository, captured by
+[`scripts/08-capture-events.sh`](scripts/08-capture-events.sh):
+
+```json
+{
+  "type": "PushEvent",
+  "created_at": "2026-09-21T10:21:43Z",
+  "repo": "chrisns/example-orphaned-commit-repo",
+  "payload": {
+    "ref": "refs/heads/main",
+    "head": "1e7bef539fc866bfd132f5b4835871ea7d85445c",
+    "before": "8a665f4e9a66c6819a33e73132caa2c3e2f93acc"
+  }
+}
+```
+
+That `before` value is orphan `02-reset` from the evidence table. GitHub published the hash of the commit that
+the force-push was meant to bury. The full record is in [`evidence/push-events.jsonl`](evidence/push-events.jsonl).
+
+The GH Archive project stores the whole public event stream as hourly JSON files. It also mirrors the stream
+into a public BigQuery dataset. So the abandoned hashes are queryable in bulk, back to 2011.
 
 ```mermaid
 flowchart LR
-    A["Developer<br/>force-pushes"] --> B["GitHub emits PushEvent<br/>size: 0, before: SHA"]
+    A["Developer<br/>force-pushes"] --> B["GitHub emits PushEvent<br/>no commits, before: SHA"]
     B --> C["GH Archive<br/>hourly JSON files"]
     C --> D["Public BigQuery<br/>dataset"]
     D --> E["force-push-scanner<br/>selects every zero-size push"]
