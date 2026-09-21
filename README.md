@@ -31,6 +31,10 @@ Run [`scripts/verify.sh`](scripts/verify.sh) to rebuild that table yourself. A
 [scheduled workflow](.github/workflows/verify.yml) runs it every week. The workflow fails if GitHub ever
 forgets one of these commits.
 
+`verify.sh` prints one more column. That column says whether the patch still contains the fake secret. Only
+`03-pr-final` answers "no", because that commit is the redacted version of `03-pr-first`. Both are orphaned.
+Only one of them ever held the string.
+
 ---
 
 ## Part 1. What "orphaned" means
