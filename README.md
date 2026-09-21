@@ -125,12 +125,11 @@ schedule it. Treat every object you have ever pushed as permanent.
 
 ```mermaid
 stateDiagram-v2
-    direction LR
     [*] --> Reachable: you push it
-    Reachable --> Unreachable: force-push, branch delete, tag delete, pull request close
-    Unreachable --> StillServed: no garbage collection runs for you
+    Reachable --> Unreachable: a ref moves or a ref is deleted
+    Unreachable --> StillServed: no gc runs for you
     StillServed --> StillServed: every API route answers 200
-    StillServed --> Purged: GitHub Support runs gc on request
+    StillServed --> Purged: GitHub Support runs gc
     Purged --> [*]
 
     note right of StillServed
@@ -215,7 +214,7 @@ The GH Archive project stores the whole public event stream as hourly JSON files
 into a public BigQuery dataset. So the abandoned hashes are queryable in bulk, back to 2011.
 
 ```mermaid
-flowchart LR
+flowchart TB
     A["Developer<br/>force-pushes"] --> B["GitHub emits PushEvent<br/>no commits, before: SHA"]
     B --> C["GH Archive<br/>hourly JSON files"]
     C --> D["Public BigQuery<br/>dataset"]
@@ -244,8 +243,9 @@ of one organisation takes minutes.
 Force-pushing is the famous route. It is not the only one. Some of the others leave no local trace at all.
 
 ```mermaid
-flowchart TB
+flowchart LR
     subgraph ROUTES["Eight routes"]
+        direction TB
         R1["1. Amend and force-push"]
         R2["2. Reset and force-push"]
         R3["3. Pull request head"]
