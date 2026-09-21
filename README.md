@@ -128,11 +128,11 @@ stateDiagram-v2
     [*] --> Reachable: you push it
     Reachable --> Unreachable: a ref moves or a ref is deleted
     Unreachable --> StillServed: no gc runs for you
-    StillServed --> StillServed: every API route answers 200
     StillServed --> Purged: GitHub Support runs gc
     Purged --> [*]
 
     note right of StillServed
+        Every API route answers 200.
         All eight commits in this
         repository sit here now.
     end note
