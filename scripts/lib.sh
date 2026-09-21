@@ -21,7 +21,7 @@ record() {
   # Replace any earlier row that has the same id.
   awk -F'\t' -v id="$id" 'NR==1 || $1 != id' "$EVIDENCE" > "$EVIDENCE.tmp"
   printf '%s\t%s\t%s\t%s\n' "$id" "$sha" "$route" "$desc" >> "$EVIDENCE.tmp"
-  mv "$EVIDENCE.tmp" "$EVIDENCE"
+  mv -f "$EVIDENCE.tmp" "$EVIDENCE"
   echo "recorded: $id $sha ($route)"
 }
 

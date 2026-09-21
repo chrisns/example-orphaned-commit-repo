@@ -1,0 +1,9 @@
+id	sha	route	description
+01-amend	1f06319ff3f1edb1bee3938b105b253b1fc861fd	force-push --amend	Pre-amend commit on main. Still holds the fake secret.
+02-reset	8a665f4e9a66c6819a33e73132caa2c3e2f93acc	force-push --reset	Dropped commit. Never reachable from any branch again.
+03-pr-final	f8d67f4ddd1185182a3dfe3ef8d5274d452419e9	pull request head	Final head of PR #3. Kept under refs/pull/3/head after branch deletion.
+03-pr-first	bd7b40ec8e2b00f8abdc9140084e56818b521b17	pull request head	First head of PR #3. Superseded by a force-push, then the PR closed and the branch deleted.
+04-fork	aad88fed2eb33c0dabcae19819984234e33e47bd	fork network	Pushed to the cnsdotme fork only, then the fork branch was deleted. Readable through the parent repository.
+05-tag	49c1bf56d078bf4d44efb471740a8d60de574150	deleted tag	Reached GitHub through a lightweight tag only. The branch never contained it.
+06-api	c6b5e81903a85f44afd735564df0b56c23d48852	API, no ref	Written by the Git Data API. It never had a ref, so nothing had to be deleted.
+07-hidden	fb57b1d73cced97ea2a15acb51b585d3cffab00e	custom ref namespace	Pushed to refs/hidden/stash, which the web UI does not list, then the ref was deleted.

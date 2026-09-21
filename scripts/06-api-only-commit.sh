@@ -8,7 +8,9 @@ cd "$ROOT"
 PARENT="$(git rev-parse origin/main)"
 BASE_TREE="$(gh api "repos/$SLUG/git/commits/$PARENT" --jq .tree.sha)"
 
-BLOB="$(payload 06-api | gh api "repos/$SLUG/git/blobs" -f encoding=utf-8 -f content=@- --jq .sha)"
+# gh api -f cannot take a body from stdin, so build the JSON with jq.
+BLOB="$(payload 06-api | jq -Rs '{encoding:"utf-8", content:.}' \
+  | gh api "repos/$SLUG/git/blobs" --input - --jq .sha)"
 
 TREE="$(gh api "repos/$SLUG/git/trees" \
   -f base_tree="$BASE_TREE" \
